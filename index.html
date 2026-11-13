@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>여는 중…</title></head>
+<body style="font:16px/1.6 sans-serif;padding:24px;color:#333">여는 중입니다… 큰 책은 20초쯤 걸려요.</body>
+<script>
+// 교재 열기: 구글 계정이 여러 개 로그인된 브라우저에서도 열리도록, 앱스 스크립트에서 쿠키 없이(credentials omit) 받아 와 이 페이지에 그린다.
+// 이 페이지에는 책 내용도 열쇠도 없다. 열쇠(k)는 주소에 붙어 오고, 맞지 않으면 앱이 거절한다.
+const EXEC = 'https://script.google.com/macros/s/AKfycbwJ6gq-4t_QYwyM8Ts4Tby_4__LDYiorNg62lmjYYX4F6aQ9_0nyavtT2vW0ZQl39Qb1w/exec';
+const q = location.search;
+if (!/[?&]k=/.test(q)) document.body.textContent = '열 수 없는 주소예요.';
+else fetch(EXEC + q + '&fmt=text', { credentials: 'omit' })
+  .then(r => { if (!r.ok) throw new Error('응답 ' + r.status); return r.text(); })
+  .then(t => {
+    t = t.split(EXEC).join(location.origin + location.pathname);  // 목차 안 교재·책 링크도 이 페이지로
+    t = t.replace(/<head([^>]*)>/i, '<head$1><meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">');  // 열쇠가 든 주소가 다른 사이트로 새지 않게
+    document.open(); document.write(t); document.close();
+  })
+  .catch(e => { document.body.textContent = '열지 못했어요. 잠시 뒤 다시 눌러 주세요. (' + e.message + ')'; });
+</script>
+</html>
